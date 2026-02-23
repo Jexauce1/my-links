@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Influenceur | Tous mes réseaux</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.5);
+            --accent: #ff3b30;
+            --border: rgba(255, 255, 255, 0.08);
+            --hover: rgba(255, 255, 255, 0.08);
+            
+            /* Couleurs réseaux sociaux */
+            --instagram: #E4405F;
+            --tiktok: #00f2ea;
+            --youtube: #FF0000;
+            --twitter: #1DA1F2;
+            --facebook: #1877F2;
+            --linkedin: #0A66C2;
+            --snapchat: #FFFC00;
+            --twitch: #9146FF;
+            --discord: #5865F2;
+            --telegram: #0088cc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Effects */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(ellipse at top, rgba(255, 59, 48, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(0, 242, 234, 0.1) 0%, transparent 40%),
+                radial-gradient(ellipse at bottom left, rgba(255, 0, 85, 0.1) 0%, transparent 40%);
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .badge {
+            margin-top: 1rem;
+        }
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Profile Section */
+        .profile {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 8px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+            padding: 3px;
+            background: var(--bg-primary);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-container:hover .avatar {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .status-ring {
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, var(--instagram), var(--tiktok), var(--youtube)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .verified {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--accent);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 3px solid var(--bg-primary);
+            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
+        }
+
+        .name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .handle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .handle::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #00d084;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00d084;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .bio {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-width: 320px;
+            margin-top: 4px;
+        }
+
+        /* Primary CTA */
+        .primary-cta {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent), #ff6b6b);
+            border: none;
+            border-radius: 16px;
+            padding: 18px 24px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 8px 0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 59, 48, 0.3);
+            text-decoration: none;
+        }
+
+        .primary-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 59, 48, 0.4);
+        }
+
+        .primary-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .primary-cta:hover::before {
+            left: 100%;
+        }
+
+        .primary-cta .badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: white;
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Divider */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 8px 0;
+            position: relative;
+        }
+
+        .divider-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-primary);
+            padding: 0 16px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        /* Social Grid */
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        .social-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, var(--hover) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .social-card:hover::before {
+            opacity: 1;
+        }
+
+        .social-card:hover {
+            transform: translateY(-4px);
+            border-color: currentColor;
+            box-shadow: 0 10px 40px -10px currentColor;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 1;
+        }
+
+        .social-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .social-handle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            z-index: 1;
+        }
+
+        /* Specific colors for each platform */
+        .social-card.instagram { --hover-color: var(--instagram); }
+        .social-card.instagram:hover { color: var(--instagram); border-color: var(--instagram); }
+
+        .social-card.tiktok { --hover-color: var(--tiktok); }
+        .social-card.tiktok:hover { color: var(--tiktok); border-color: var(--tiktok); }
+
+        .social-card.youtube { --hover-color: var(--youtube); }
+        .social-card.youtube:hover { color: var(--youtube); border-color: var(--youtube); }
+
+        .social-card.twitter { --hover-color: var(--twitter); }
+        .social-card.twitter:hover { color: var(--twitter); border-color: var(--twitter); }
+
+        .social-card.facebook { --hover-color: var(--facebook); }
+        .social-card.facebook:hover { color: var(--facebook); border-color: var(--facebook); }
+
+        .social-card.linkedin { --hover-color: var(--linkedin); }
+        .social-card.linkedin:hover { color: var(--linkedin); border-color: var(--linkedin); }
+
+        .social-card.snapchat { --hover-color: var(--snapchat); }
+        .social-card.snapchat:hover { color: var(--snapchat); border-color: var(--snapchat); }
+
+        .social-card.twitch { --hover-color: var(--twitch); }
+        .social-card.twitch:hover { color: var(--twitch); border-color: var(--twitch); }
+
+        /* Secondary Links */
+        .secondary-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .link-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .link-item:hover {
+            background: var(--hover);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
+        }
+
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+        }
+
+        .link-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .link-arrow {
+            color: var(--text-secondary);
+            transition: transform 0.3s;
+        }
+
+        .link-item:hover .link-arrow {
+            transform: translateX(4px);
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            opacity: 0.6;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 400px) {
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .name {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-card) 25%, var(--hover) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="noise"></div>
+
+    <div class="container">
+        <!-- Profile -->
+        <div class="profile">
+            <div class="avatar-container">
+                <div class="status-ring"></div>
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop" alt="Profile" class="avatar" id="avatar">
+                <div class="verified">✓</div>
+            </div>
+            <h1 class="name">Marie Digital</h1>
+            <div class="handle">@marie_digital</div>
+            <p class="bio">🎨 Créatrice de contenu lifestyle & business<br>📍 Paris | Collabs: contact@marie.com</p>
+        </div>
+
+        <!-- Primary CTA -->
+        <a href="#" class="primary-cta" onclick="trackEvent('primary_cta')">
+            <span class="badge">NOUVEAU</span>
+            <span>🔥</span>
+            <span>Mon Programme Creators Pro</span>
+        </a>
+
+        <!-- Divider -->
+        <div class="divider">
+            <span class="divider-text">Suivez-moi</span>
+        </div>
+
+        <!-- Social Grid -->
+        <div class="social-grid">
+            <a href="https://instagram.com" class="social-card instagram" target="_blank" onclick="trackEvent('instagram')">
+                <div class="social-icon">📸</div>
+                <div class="social-name">Instagram</div>
+                <div class="social-handle">@marie_digital</div>
+            </a>
+
+            <a href="https://tiktok.com" class="social-card tiktok" target="_blank" onclick="trackEvent('tiktok')">
+                <div class="social-icon">🎵</div>
+                <div class="social-name">TikTok</div>
+                <div class="social-handle">@marie_digital</div>
+            </a>
+
+            <a href="https://youtube.com" class="social-card youtube" target="_blank" onclick="trackEvent('youtube')">
+                <div class="social-icon">▶️</div>
+                <div class="social-name">YouTube</div>
+                <div class="social-handle">Marie Digital</div>
+            </a>
+
+            <a href="https://twitter.com" class="social-card twitter" target="_blank" onclick="trackEvent('twitter')">
+                <div class="social-icon">🐦</div>
+                <div class="social-name">X / Twitter</div>
+                <div class="social-handle">@marie_digital</div>
+            </a>
+
+            <a href="https://facebook.com" class="social-card facebook" target="_blank" onclick="trackEvent('facebook')">
+                <div class="social-icon">👥</div>
+                <div class="social-name">Facebook</div>
+                <div class="social-handle">Marie Digital</div>
+            </a>
+
+            <a href="https://linkedin.com" class="social-card linkedin" target="_blank" onclick="trackEvent('linkedin')">
+                <div class="social-icon">💼</div>
+                <div class="social-name">LinkedIn</div>
+                <div class="social-handle">Marie Digital</div>
+            </a>
+
+            <a href="https://snapchat.com" class="social-card snapchat" target="_blank" onclick="trackEvent('snapchat')">
+                <div class="social-icon">👻</div>
+                <div class="social-name">Snapchat</div>
+                <div class="social-handle">marie.snap</div>
+            </a>
+
+            <a href="https://twitch.tv" class="social-card twitch" target="_blank" onclick="trackEvent('twitch')">
+                <div class="social-icon">📺</div>
+                <div class="social-name">Twitch</div>
+                <div class="social-handle">marie_live</div>
+            </a>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider">
+            <span class="divider-text">Liens utiles</span>
+        </div>
+
+        <!-- Secondary Links -->
+        <div class="secondary-links">
+            <a href="#" class="link-item" onclick="trackEvent('newsletter')">
+                <div class="link-icon" style="color: #ff6b6b;">📧</div>
+                <div class="link-content">
+                    <div class="link-title">Newsletter</div>
+                    <div class="link-desc">Reçois mes meilleurs conseils chaque semaine</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+
+            <a href="#" class="link-item" onclick="trackEvent('contact')">
+                <div class="link-icon" style="color: #4ecdc4;">💬</div>
+                <div class="link-content">
+                    <div class="link-title">Contact Pro</div>
+                    <div class="link-desc">Collabs, partenariats, presse</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+
+            <a href="#" class="link-item" onclick="trackEvent('shop')">
+                <div class="link-icon" style="color: #ffe66d;">🛍️</div>
+                <div class="link-content">
+                    <div class="link-title">Ma Boutique</div>
+                    <div class="link-desc">Presets, templates & ebooks</div>
+                </div>
+                <div class="link-arrow">→</div>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-brand">
+                <span>⚡</span>
+                <span>LinkPro</span>
+            </div>
+            <p>© 2026Marie Digital. Tous droits réservés.</p>
+        </div>
+    </div>
+
+    <script>
+        // Animation d'entrée staggered
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.social-card, .link-item');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index + 200);
+            });
+        });
+
+        // Tracking des clics (simulation)
+        function trackEvent(eventName) {
+            console.log(`📊 Clic: ${eventName}`);
+            
+            // Animation de feedback
+            const element = event.currentTarget;
+            element.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                element.style.transform = '';
+            }, 150);
+
+            // Ici tu peux ajouter Google Analytics 4 :
+            // gtag('event', 'click', {
+            //     'event_category': 'social_link',
+            //     'event_label': eventName,
+            //     'value': 1
+            // });
+        }
+
+        // Changement de photo de profil dynamique
+        // Remplace l'URL ci-dessous par ta vraie photo
+        // document.getElementById('avatar').src = 'URL_DE_TA_PHOTO';
+
+        // Effet 3D subtil sur les cartes au mouvement de souris
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.social-card');
+            const x = (window.innerWidth / 2 - e.pageX) / 50;
+            const y = (window.innerHeight / 2 - e.pageY) / 50;
+            
+            cards.forEach(card => {
+                card.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${y}deg)`;
+            });
+        });
+    </script>
+</body>
+</html>
